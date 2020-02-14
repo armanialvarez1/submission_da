@@ -8,8 +8,9 @@
 ; Result should be 0xCB9AC_F934C_9691
 ;
 
+.org 0x00
 start:
-	CLR R0			; Make sure R0 is zero
+	CLR R0			; Make sure R0 is zero for later use
 
     LDI R19, 0xAB	; Load the two MSB of the multiplicand into R19
 	LDI R18, 0x75	; Load the next two bytes of the multiplicand into R18
@@ -35,25 +36,16 @@ multiply:
 	ADC R25, R17	; Add the next two bytes of the multiplicand with the first next two bytes of the result with above carry
 	ADC R26, R18	; Add the next two bytes of the multiplicand with the first next two bytes of the result with above carry
 	ADC R27, R19	; Add the next two bytes of the multiplicand with the first next two bytes of the result with above carry
-	ADC R28, R0		; Store any left over carry
-	ADC R29, R0		; Store any left over carry
-	ADC R30, R0		; Store any left over carry
-	ADC R31, R0		; Store any left over carry
+	ADC R28, R0		; Store any leftover carry
+	ADC R29, R0		; Store any leftover carry
+	ADC R30, R0		; Store any leftover carry
+	ADC R31, R0		; Store any leftover carry
 
-	DEC R20			; Decrease the multipler by 1
-	CPI R20, 0xFF	; if the multiplier is now FF (underflow), we need to decrement the next bit
-	BRNE skip		; if underflow didn't occur, skip this
-	
-	DEC R21			; Decrease the next bit of the multiplier
-	CPI R21, 0xFF	; Check if this byte also underflew
-	BRNE skip		; skip if it didn't
+	SUBI R20, 1		; Decrease the multiplier by 1
+	SBC R21, R0		; If R20 underflew, decrease the next bit
+	SBC R22, R0		; If R21 underflew, decrease the next bit
+	SBC R23, R0		; If R22 underflew, decrease the next bit
 
-	DEC R22			; Decrease the next bit of the multiplier
-	CPI R22, 0xFF	; Check if this byte also underflew
-	BRNE skip		; skip if it didn't
-
-	DEC R23			; Decrease the next bit of the multiplier
-skip:
 	CPI R20, 0		; Check if the first byte is zero
 	BRNE multiply	; if not we need to keep multiplying
 
@@ -66,4 +58,4 @@ skip:
 	CPI R23, 0		; check the next byte if it is zero
 	BRNE multiply	; if not we need to keep multiplying
 
-end: rjmp end		; When the enter multiplier is zero, we are done
+end: jmp end		; When the entire multiplier is zero, we are done
