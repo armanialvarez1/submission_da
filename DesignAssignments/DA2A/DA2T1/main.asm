@@ -25,10 +25,7 @@ start:
 
 CYCLE: 
 	SBI PORTB, 3 ; Set PINB.3 High
-	delay2_5ms 200 ; Delay for 0.4125 secs @16MHz
-	delay2_5ms 200 ; Delay for 0.4125 secs @16MHz
-	delay2_5ms 200 ; Delay for 0.4125 secs @16MHz
-	delay2_5ms 200 ; Delay for 0.4125 secs @16MHz
+	delay2_5ms 165 ; Delay for 0.4125 secs @16MHz
 	CBI PORTB, 3 ; Set PINB.3 Low
 	delay2_5ms 135 ; Delay for 0.3375 secs @16MHz
 	jmp CYCLE ; repeat waveform
